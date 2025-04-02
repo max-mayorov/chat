@@ -1,21 +1,14 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+import koa from 'koa';
 
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
+const host = process.env.HOST ?? 'localhost';
+const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
-}
+const app = new koa();
 
-bootstrap();
+app.use(async (ctx) => {
+  ctx.body = { message: 'Hello API' };
+});
+
+app.listen(port, host, () => {
+  console.log(`[ ready ] http://${host}:${port}`);
+});
