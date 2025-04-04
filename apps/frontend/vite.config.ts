@@ -2,9 +2,18 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/frontend',
+  define: {
+    // Provide default environment variables
+    'import.meta.env.VITE_API_URL': JSON.stringify(
+      mode === 'production' ? '/api' : 'http://localhost:3000/api'
+    ),
+    'import.meta.env.VITE_WS_URL': JSON.stringify(
+      mode === 'production' ? 'ws://localhost/ws' : 'ws://localhost:3000'
+    ),
+  },
   server: {
     port: 4200,
     host: 'localhost',
