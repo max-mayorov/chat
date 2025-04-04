@@ -24,9 +24,9 @@ export interface WebSocketMessage {
 /**
  * Callback types for WebSocket events
  */
-type MessageCallback = (message: Message, conversationId: string) => void;
+type MessageCallback = (message: Message) => void;
 type ConversationCallback = (conversation: Conversation) => void;
-type UserCallback = (userId: string, conversationId: string) => void;
+type UserCallback = (userId: string) => void;
 
 /**
  * Service for WebSocket communication
@@ -83,7 +83,7 @@ export class WebSocketService {
     switch (message.type) {
       case WebSocketEvent.NEW_MESSAGE:
         this.messageCallbacks.forEach((callback) =>
-          callback(message.payload.message, message.payload.conversationId)
+          callback(message.payload.message)
         );
         break;
       case WebSocketEvent.CONVERSATION_HISTORY:
@@ -93,12 +93,12 @@ export class WebSocketService {
         break;
       case WebSocketEvent.USER_JOINED:
         this.userJoinedCallbacks.forEach((callback) =>
-          callback(message.payload.userId, message.payload.conversationId)
+          callback(message.payload.userId)
         );
         break;
       case WebSocketEvent.USER_LEFT:
         this.userLeftCallbacks.forEach((callback) =>
-          callback(message.payload.userId, message.payload.conversationId)
+          callback(message.payload.userId)
         );
         break;
       default:
@@ -115,26 +115,6 @@ export class WebSocketService {
     } else {
       console.error('WebSocket not connected');
     }
-  }
-
-  /**
-   * Join a conversation
-   */
-  joinConversation(userId: string, conversationId: string): void {
-    this.send({
-      type: WebSocketEvent.JOIN_CONVERSATION,
-      payload: { userId, conversationId },
-    });
-  }
-
-  /**
-   * Leave a conversation
-   */
-  leaveConversation(): void {
-    this.send({
-      type: WebSocketEvent.LEAVE_CONVERSATION,
-      payload: {},
-    });
   }
 
   /**
