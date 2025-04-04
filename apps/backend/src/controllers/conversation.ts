@@ -1,6 +1,4 @@
-import { Context, Next } from 'koa';
-import Router from 'koa-router';
-import { User, DomainFactory } from '@chat/domain';
+import { Context } from 'koa';
 import { conversationService, messageService } from '../services/index.js';
 
 /**

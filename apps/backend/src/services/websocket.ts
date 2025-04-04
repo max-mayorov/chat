@@ -1,7 +1,7 @@
-import { Server as HttpServer } from 'http';
-import { WebSocket, WebSocketServer } from 'ws';
-import { User, Message, ConversationImpl } from '@chat/domain';
+import { WebSocket } from 'ws';
+import { Message } from '@chat/domain';
 import { conversationStore } from '../models/index.js';
+import { Context } from 'koa';
 
 /**
  * WebSocket event types
@@ -36,47 +36,36 @@ interface ClientConnection {
 /**
  * WebSocket service for real-time communication
  */
-export class WebSocketService {
-  private wss: WebSocketServer;
+export class WebSocketController {
   private clients: Map<WebSocket, ClientConnection> = new Map();
   private conversationClients: Map<string, Set<WebSocket>> = new Map(); // conversationId -> Set of WebSocket connections
 
-  constructor(server: HttpServer) {
-    this.wss = new WebSocketServer({ server });
-    this.setupWebSocketServer();
-  }
+  async handleConnection(ctx: Context): Promise<void> {
+    console.log('WebSocket connection established');
+    const ws = ctx.websocket;
+    // Initialize client connection
+    this.clients.set(ws, { ws, userId: '' });
 
-  /**
-   * Set up WebSocket server and event handlers
-   */
-  private setupWebSocketServer(): void {
-    this.wss.on('connection', (ws: WebSocket) => {
-      console.log('Client connected');
+    // Handle messages
+    ws.on('message', (data: string) => {
+      try {
+        const message: WebSocketMessage = JSON.parse(data);
+        this.handleMessage(ws, message);
+      } catch (error) {
+        console.error('Error parsing message:', error);
+        this.sendErrorToClient(ws, 'Invalid message format');
+      }
+    });
 
-      // Initialize client connection
-      this.clients.set(ws, { ws, userId: '' });
+    // Handle disconnection
+    ws.on('close', () => {
+      this.handleClientDisconnect(ws);
+    });
 
-      // Handle messages
-      ws.on('message', (data: string) => {
-        try {
-          const message: WebSocketMessage = JSON.parse(data);
-          this.handleMessage(ws, message);
-        } catch (error) {
-          console.error('Error parsing message:', error);
-          this.sendErrorToClient(ws, 'Invalid message format');
-        }
-      });
-
-      // Handle disconnection
-      ws.on('close', () => {
-        this.handleClientDisconnect(ws);
-      });
-
-      // Handle errors
-      ws.on('error', (error: Error) => {
-        console.error('WebSocket error:', error);
-        this.handleClientDisconnect(ws);
-      });
+    // Handle errors
+    ws.on('error', (error: Error) => {
+      console.error('WebSocket error:', error);
+      this.handleClientDisconnect(ws);
     });
   }
 
@@ -84,6 +73,7 @@ export class WebSocketService {
    * Handle incoming WebSocket messages
    */
   private handleMessage(ws: WebSocket, message: WebSocketMessage): void {
+    console.log('Received message:', message);
     switch (message.type) {
       case WebSocketEvent.JOIN_CONVERSATION:
         this.handleJoinConversation(ws, message.payload);
@@ -92,6 +82,7 @@ export class WebSocketService {
         this.handleLeaveConversation(ws);
         break;
       case WebSocketEvent.NEW_MESSAGE:
+        console.log('New message:', message.payload);
         this.handleNewMessage(ws, message.payload);
         break;
       default:
@@ -184,6 +175,7 @@ export class WebSocketService {
    */
   private handleNewMessage(ws: WebSocket, payload: { message: Message }): void {
     const clientConnection = this.clients.get(ws);
+    console.log('Client connection:', clientConnection);
     if (!clientConnection || !clientConnection.conversationId) {
       this.sendErrorToClient(ws, 'Not joined to any conversation');
       return;
@@ -196,6 +188,12 @@ export class WebSocketService {
     const success = conversationStore.addMessageToConversation(
       conversationId,
       message
+    );
+    console.log(
+      'Adding message to conversation:',
+      conversationId,
+      message,
+      success
     );
     if (success) {
       // Broadcast message to all clients in the conversation
@@ -279,3 +277,5 @@ export class WebSocketService {
     }
   }
 }
+
+export const webSocketController = new WebSocketController();

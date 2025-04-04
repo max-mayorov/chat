@@ -19,12 +19,15 @@ export const ChatApp: React.FC = () => {
       try {
         // Set up WebSocket event handlers
         websocketService.onMessage((message, convId) => {
+          console.log('Received message:', message);
           if (convId === conversationId) {
             setMessages((prevMessages) => [...prevMessages, message]);
           }
         });
 
         websocketService.onConversationHistory((conversation) => {
+          console.log('Received conversation:', conversation);
+
           setMessages(conversation.messages);
         });
 

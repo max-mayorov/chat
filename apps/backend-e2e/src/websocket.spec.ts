@@ -1,6 +1,5 @@
 import axios from 'axios';
 import WebSocket from 'ws';
-import { DomainFactory } from '@chat/domain';
 
 describe('WebSocket API', () => {
   let conversationId: string;
@@ -56,7 +55,6 @@ describe('WebSocket API', () => {
 
       ws.on('error', (error) => {
         fail(`WebSocket connection failed: ${error.message}`);
-        done();
       });
     });
   });
@@ -65,8 +63,6 @@ describe('WebSocket API', () => {
     it('should join a conversation and receive history', (done) => {
       if (!conversationId) {
         fail('No conversation ID available for testing');
-        done();
-        return;
       }
 
       const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
@@ -100,15 +96,12 @@ describe('WebSocket API', () => {
 
       ws.on('error', (error) => {
         fail(`WebSocket error: ${error.message}`);
-        done();
       });
     });
 
     it('should send and receive messages in real-time', (done) => {
       if (!conversationId) {
         fail('No conversation ID available for testing');
-        done();
-        return;
       }
 
       const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';

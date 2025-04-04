@@ -53,9 +53,10 @@ export class WebSocketService {
     this.ws.onopen = () => {
       console.log('WebSocket connected');
     };
-
+    console.log('WebSocket URL:', wsUrl); // Log the WebSocket URL
     this.ws.onmessage = (event) => {
       try {
+        console.log('WebSocket message received:', event.data);
         const message: WebSocketMessage = JSON.parse(event.data);
         this.handleMessage(message);
       } catch (error) {

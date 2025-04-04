@@ -1,4 +1,4 @@
-import { Conversation, ConversationImpl, User, Message } from '@chat/domain';
+import { ConversationImpl, Message } from '@chat/domain';
 
 /**
  * In-memory store for conversations

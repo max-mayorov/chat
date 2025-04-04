@@ -1,24 +1,17 @@
-import Koa from 'koa';
+import Koa, { Context } from 'koa';
 import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
+import websockify from 'koa-websocket';
 import cors from '@koa/cors';
-import { createServer } from 'http';
 import { errorHandler } from './middleware/index.js';
 import { conversationController } from './controllers/index.js';
-import { WebSocketService } from './services/index.js';
+import { webSocketController } from './services/websocket.js';
 
 // Environment variables
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-// Create Koa app
-const app = new Koa();
-
-// Create HTTP server
-const server = createServer(app.callback());
-
-// Create WebSocket service
-const webSocketService = new WebSocketService(server);
+const app = websockify(new Koa());
 
 // Set up middleware
 app.use(errorHandler);
@@ -27,6 +20,7 @@ app.use(bodyParser());
 
 // Set up routes
 const router = new Router({ prefix: '/api' });
+const wsRouter = new Router({ prefix: '/' });
 
 // Conversation routes
 router.get(
@@ -62,13 +56,18 @@ router.get(
 app.use(router.routes());
 app.use(router.allowedMethods());
 
+wsRouter.get(
+  '/',
+  webSocketController.handleConnection.bind(webSocketController)
+);
+app.ws.use(wsRouter.routes());
+app.ws.use(wsRouter.allowedMethods());
+
 // Error handling
-app.on('error', (err, ctx) => {
-  console.error('Server error:', err);
+app.on('error', (err: Error, ctx: Context) => {
+  console.error('Server error:', { err, ctx });
 });
 
-// Start server
-server.listen(port, host, () => {
-  console.log(`[ ready ] http://${host}:${port}`);
-  console.log(`[ websocket ] ws://${host}:${port}`);
+app.listen(port, host, () => {
+  console.log(`Server is running on port ${port}`);
 });

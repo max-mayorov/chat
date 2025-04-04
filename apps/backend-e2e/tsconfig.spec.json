@@ -2,10 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "ESNext",
+    "module": "nodenext",
     "types": ["jest", "node"],
     "esModuleInterop": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "nodenext"
   },
   "include": [
     "jest.config.ts",

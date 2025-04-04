@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { User, Message, ConversationImpl, DomainFactory } from '@chat/domain';
+import { User, ConversationImpl, DomainFactory } from '@chat/domain';
 import { conversationStore } from '../models/index.js';
 
 /**
