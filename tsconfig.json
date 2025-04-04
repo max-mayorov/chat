@@ -16,7 +16,7 @@
       "path": "./libs/domain"
     },
     {
-      "path": "./libs/domain"
+      "path": "./apps/backend-e2e"
     }
   ]
 }

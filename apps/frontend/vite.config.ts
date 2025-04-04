@@ -1,6 +1,7 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => ({
   root: __dirname,
@@ -22,7 +23,7 @@ export default defineConfig(({ mode }) => ({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [react()],
+  plugins: [react(), tsconfigPaths()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
