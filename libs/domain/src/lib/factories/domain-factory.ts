@@ -3,13 +3,15 @@ import {
   UserImpl,
   Message,
   MessageImpl,
-  Conversation,
   ConversationImpl,
 } from '../models/index.js';
 
 /**
  * Factory for creating domain objects
  */
+const conversation = new ConversationImpl({
+  messages: [],
+});
 export class DomainFactory {
   /**
    * Creates a new user
@@ -44,17 +46,7 @@ export class DomainFactory {
   /**
    * Creates a new conversation
    */
-  static createConversation(
-    id: string,
-    participants: User[],
-    name?: string
-  ): Conversation {
-    return new ConversationImpl({
-      id,
-      participants,
-      messages: [],
-      name,
-      createdAt: new Date(),
-    });
+  static getConversation(): ConversationImpl {
+    return conversation;
   }
 }

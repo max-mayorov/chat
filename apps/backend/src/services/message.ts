@@ -17,16 +17,16 @@ export class MessageService {
   /**
    * Add a message to a conversation
    */
-  addMessageToConversation(conversationId: string, message: Message): boolean {
-    return conversationStore.addMessageToConversation(conversationId, message);
+  addMessage(message: Message): boolean {
+    return conversationStore.addMessage(message);
   }
 
   /**
    * Get messages for a conversation
    */
-  getMessagesForConversation(conversationId: string): Message[] {
-    const conversation = conversationStore.getConversation(conversationId);
-    return conversation ? conversation.messages : [];
+  getMessages(): Message[] {
+    const messages = conversationStore.getMessages();
+    return messages;
   }
 }
 

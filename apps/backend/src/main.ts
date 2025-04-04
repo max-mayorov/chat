@@ -4,7 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import websockify from 'koa-websocket';
 import cors from '@koa/cors';
 import { errorHandler } from './middleware/index.js';
-import { conversationController } from './controllers/index.js';
+import { messagesController } from './controllers/index.js';
 import { webSocketController } from './services/websocket.js';
 
 // Environment variables
@@ -22,34 +22,13 @@ app.use(bodyParser());
 const router = new Router({ prefix: '/api' });
 const wsRouter = new Router({ prefix: '/' });
 
-// Conversation routes
 router.get(
-  '/conversations',
-  conversationController.getAllConversations.bind(conversationController)
-);
-router.get(
-  '/conversations/:id',
-  conversationController.getConversation.bind(conversationController)
+  '/messages',
+  messagesController.getMessages.bind(messagesController)
 );
 router.post(
-  '/conversations',
-  conversationController.createConversation.bind(conversationController)
-);
-router.post(
-  '/conversations/:id/messages',
-  conversationController.addMessage.bind(conversationController)
-);
-router.post(
-  '/conversations/:id/users',
-  conversationController.addUserToConversation.bind(conversationController)
-);
-router.delete(
-  '/conversations/:id/users/:userId',
-  conversationController.removeUserFromConversation.bind(conversationController)
-);
-router.get(
-  '/users/:userId/conversations',
-  conversationController.getConversationsForUser.bind(conversationController)
+  '/messages',
+  messagesController.addMessage.bind(messagesController)
 );
 
 // Register routes
