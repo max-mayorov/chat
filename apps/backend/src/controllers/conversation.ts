@@ -17,7 +17,6 @@ export class MessagesController {
    * Add a message to a conversation
    */
   async addMessage(ctx: Context): Promise<void> {
-    const { id } = ctx.params;
     const { content, sender } = ctx.request.body as any;
 
     if (!content) {
