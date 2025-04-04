@@ -7,10 +7,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
  * Service for interacting with the backend API
  */
 export class ApiService {
-  async getConversation(id: string): Promise<Conversation> {
-    const response = await fetch(`${API_URL}/conversation`);
+  async getMessages(): Promise<Message[]> {
+    const response = await fetch(`${API_URL}/messages`);
     const data = await response.json();
-    return data.conversation;
+    return data.messages;
   }
 
   async addMessage(content: string, sender: User): Promise<Message> {

@@ -59,6 +59,9 @@ importers:
       react-router-dom:
         specifier: 6.29.0
         version: 6.29.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-use-websocket:
+        specifier: ^4.13.0
+        version: 4.13.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -6503,6 +6506,9 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
+
+  react-use-websocket@4.13.0:
+    resolution: {integrity: sha512-anMuVoV//g2N76Wxqvqjjo1X48r9Np3y1/gMl7arX84tAPXdy5R7sB5lO5hvCzQRYjqXwV8XMAiEBOUbyrZFrw==}
 
   react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
@@ -15330,6 +15336,8 @@ snapshots:
     dependencies:
       '@remix-run/router': 1.22.0
       react: 19.0.0
+
+  react-use-websocket@4.13.0: {}
 
   react@19.0.0: {}
 
