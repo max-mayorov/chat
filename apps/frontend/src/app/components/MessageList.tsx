@@ -23,13 +23,9 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
           </p>
         </div>
       ) : (
-        messages.map((message) =>
-          message ? (
-            'UNDEF'
-          ) : (
-            <MessageComponent key={message.id} message={message} />
-          )
-        )
+        messages.map((message) => (
+          <MessageComponent key={message.id} message={message} />
+        ))
       )}
       <div ref={messagesEndRef} />
     </div>

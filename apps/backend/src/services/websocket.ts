@@ -2,12 +2,14 @@ import { WebSocket } from 'ws';
 import { Message } from '@chat/domain';
 import { conversationStore } from '../models/index.js';
 import { Context } from 'koa';
+import { messageService } from './message.js';
 
 /**
  * WebSocket event types
  */
 export enum WebSocketEvent {
   NEW_MESSAGE = 'new_message',
+  CONVERSATION_HISTORY = 'conversation_history',
 }
 
 export interface WebSocketMessage {
@@ -48,16 +50,26 @@ export class WebSocketController {
       console.error('WebSocket error:', error);
       this.handleClientDisconnect(ws);
     });
+
+    this.sendConversationHistory(ws);
+  }
+
+  private sendConversationHistory(ws: WebSocket): void {
+    const conversationHistory = messageService.getMessages();
+    this.sendToClient(ws, {
+      type: WebSocketEvent.CONVERSATION_HISTORY,
+      payload: {
+        messages: conversationHistory,
+      },
+    });
   }
 
   /**
    * Handle incoming WebSocket messages
    */
   private handleMessage(ws: WebSocket, message: WebSocketMessage): void {
-    console.log('Received message:', message);
     switch (message.type) {
       case WebSocketEvent.NEW_MESSAGE:
-        console.log('New message:', message.payload);
         this.handleNewMessage(ws, message.payload);
         break;
       default:
@@ -70,15 +82,17 @@ export class WebSocketController {
 
     // Add message to conversation
     const success = conversationStore.addMessage(message);
-    console.log('Adding message to conversation:', message, success);
     if (success) {
       // Broadcast message to all clients
-      this.broadcastToAll({
-        type: WebSocketEvent.NEW_MESSAGE,
-        payload: {
-          message,
+      this.broadcastToAll(
+        {
+          type: WebSocketEvent.NEW_MESSAGE,
+          payload: {
+            message,
+          },
         },
-      });
+        ws
+      );
     } else {
       this.sendErrorToClient(ws, `Failed to add message to conversation`);
     }
@@ -117,7 +131,6 @@ export class WebSocketController {
    * Broadcast a message to all clients
    */
   private broadcastToAll(message: WebSocketMessage, exclude?: WebSocket): void {
-    console.log('Broadcasting message:', message);
     this.clients.forEach((client) => {
       if (client !== exclude && client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(message));
