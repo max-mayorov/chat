@@ -60,12 +60,14 @@ export const ChatApp: React.FC = () => {
   }, [lastJsonMessage]);
 
   useEffect(() => {
-    async function fetchMessages() {
+    const fetchMessages = async () => {
       const retrievedMessages = await apiService.getMessages();
-      if (retrievedMessages.length > messages.length) {
-        setMessages(messages);
-      }
-    }
+      setMessages((prevMessages) =>
+        retrievedMessages.length > prevMessages.length
+          ? retrievedMessages
+          : prevMessages
+      );
+    };
     fetchMessages();
   }, []);
 
@@ -89,7 +91,6 @@ export const ChatApp: React.FC = () => {
     const newMessage = DomainFactory.createMessage(messageId, content, user);
 
     // Add message to conversation via API
-
     if (isConnected) {
       sendJsonMessage({
         type: WebSocketEvent.NEW_MESSAGE,
@@ -98,8 +99,6 @@ export const ChatApp: React.FC = () => {
     } else {
       await apiService.addMessage(content, user);
     }
-
-    // Always add to local state (optimistic update or local-only mode)
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 

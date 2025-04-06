@@ -25,4 +25,4 @@ export class MessagesStore {
 }
 
 // Singleton instance
-export const conversationStore = new MessagesStore();
+export const messagesStore = new MessagesStore();

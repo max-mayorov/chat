@@ -79,7 +79,6 @@ export class WebSocketController {
 
   private handleNewMessage(ws: WebSocket, payload: { message: Message }): void {
     const { message } = payload;
-
     // Add message to conversation
     const success = conversationStore.addMessage(message);
     if (success) {

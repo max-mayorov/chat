@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy package.json files for dependency installation
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/backend/package.json ./apps/backend/
 COPY libs/domain/package.json ./libs/domain/
 
@@ -20,7 +20,7 @@ COPY . .
 
 # Build the app
 RUN npm install -g nx
-RUN nx build backend
+RUN nx build backend --bundle
 
 # Production stage
 FROM base AS runner
