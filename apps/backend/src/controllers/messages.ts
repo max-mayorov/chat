@@ -1,5 +1,6 @@
 import { Context } from 'koa';
 import { messageService } from '../services/index.js';
+import { Message } from '@chat/domain';
 
 /**
  * Controller for conversation-related endpoints
@@ -17,7 +18,7 @@ export class MessagesController {
    * Add a message to a conversation
    */
   async addMessage(ctx: Context): Promise<void> {
-    const { content, sender } = ctx.request.body as any;
+    const { content, sender } = ctx.request.body as Message;
 
     if (!content) {
       ctx.status = 400;
