@@ -6,10 +6,10 @@ import { Context, Next } from 'koa';
 export async function errorHandler(ctx: Context, next: Next): Promise<void> {
   try {
     await next();
-  } catch (err) {
+  } catch (err: any) {
     console.error('Server error:', err);
 
-    const error = err as any;
+    const error = err;
     ctx.status = error.status || 500;
     ctx.body = {
       error: error.message || 'Internal Server Error',

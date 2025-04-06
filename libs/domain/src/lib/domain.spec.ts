@@ -61,20 +61,6 @@ describe('Domain Model', () => {
 
   describe('Conversation', () => {
     it('should create a conversation', () => {
-      const user1 = new UserImpl({
-        id: '1',
-        username: 'john_doe',
-        name: 'John Doe',
-        createdAt: new Date(),
-      });
-
-      const user2 = new UserImpl({
-        id: '2',
-        username: 'jane_doe',
-        name: 'Jane Doe',
-        createdAt: new Date(),
-      });
-
       const conversation = new ConversationImpl({
         messages: [],
       });

@@ -4,22 +4,42 @@ import { messagesStore } from '../models/index.js';
 import { Context } from 'koa';
 import { messageService } from './message.js';
 
-/**
- * WebSocket event types
- */
 export enum WebSocketEvent {
+  ERROR = 'error',
   NEW_MESSAGE = 'new_message',
   CONVERSATION_HISTORY = 'conversation_history',
 }
 
-export interface WebSocketMessage {
-  type: WebSocketEvent;
-  payload: any;
+export interface ErrorPayload {
+  error: string;
+}
+export interface NewMessagePayload {
+  message: Message;
+}
+export interface ConversationHistoryPayload {
+  messages: Message[];
 }
 
-/**
- * WebSocket service for real-time communication
- */
+export interface NewMessageEvent {
+  type: WebSocketEvent.NEW_MESSAGE;
+  payload: NewMessagePayload;
+}
+
+export interface ConversationHistoryEvent {
+  type: WebSocketEvent.CONVERSATION_HISTORY;
+  payload: ConversationHistoryPayload;
+}
+
+export interface ErrorEvent {
+  type: WebSocketEvent.ERROR;
+  payload: ErrorPayload;
+}
+
+export type WebSocketMessage =
+  | NewMessageEvent
+  | ConversationHistoryEvent
+  | ErrorEvent;
+
 export class WebSocketController {
   private clients: WebSocket[] = [];
 
@@ -77,7 +97,7 @@ export class WebSocketController {
     }
   }
 
-  private handleNewMessage(ws: WebSocket, payload: { message: Message }): void {
+  private handleNewMessage(ws: WebSocket, payload: NewMessagePayload): void {
     const { message } = payload;
     // Add message to conversation
     const success = messagesStore.addMessage(message);
@@ -119,7 +139,7 @@ export class WebSocketController {
    */
   private sendErrorToClient(ws: WebSocket, errorMessage: string): void {
     this.sendToClient(ws, {
-      type: WebSocketEvent.NEW_MESSAGE,
+      type: WebSocketEvent.ERROR,
       payload: {
         error: errorMessage,
       },

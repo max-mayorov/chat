@@ -21,15 +21,25 @@ module.exports = async function () {
     cwd: join(__dirname, '..', '..', '..', '..'),
   });
 
+  serverProcess.stdout.on('data', (data) => {
+    console.log(data);
+  });
+  serverProcess.stderr.on('data', (data) => {
+    console.error(data);
+  });
+
   // Store the server process so we can kill it in the teardown
   global.__SERVER__ = serverProcess;
 
   // Wait for the server to start
+  let hitTimeout = false;
+  const startTimeout = setTimeout(() => (hitTimeout = true), 15000); // Wait for 15 seconds before checking
   let isServerRunning = false;
-  while (!isServerRunning) {
+  while (!isServerRunning && !hitTimeout) {
     try {
       await axios.get(`${baseUrl}:${port}/api/messages`);
       isServerRunning = true;
+      clearTimeout(startTimeout); // Clear the timeout if the server is running
     } catch (error) {
       // Wait a bit before trying again
       await new Promise((resolve) => setTimeout(resolve, 1000));
