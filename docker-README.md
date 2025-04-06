@@ -37,9 +37,9 @@ docker-compose down
 
 Once the services are running:
 
-- Frontend: http://localhost
-- Backend API: http://localhost/api
-- WebSocket: ws://localhost/ws
+- Frontend: http://localhost:4200
+- Backend API: http://localhost:4200/api
+- WebSocket: ws://localhost:3000/ws
 
 ## Rebuilding the Images
 

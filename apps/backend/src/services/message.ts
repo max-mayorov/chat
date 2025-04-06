@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { User, Message, DomainFactory } from '@chat/domain';
-import { conversationStore } from '../models/index.js';
+import { messagesStore } from '../models/index.js';
 
 /**
  * Service for managing messages
@@ -18,14 +18,14 @@ export class MessageService {
    * Add a message to a conversation
    */
   addMessage(message: Message): boolean {
-    return conversationStore.addMessage(message);
+    return messagesStore.addMessage(message);
   }
 
   /**
    * Get messages for a conversation
    */
   getMessages(): Message[] {
-    const messages = conversationStore.getMessages();
+    const messages = messagesStore.getMessages();
     return messages;
   }
 }

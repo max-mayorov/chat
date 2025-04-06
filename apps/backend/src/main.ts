@@ -6,7 +6,7 @@ import cors from '@koa/cors';
 import { errorHandler } from './middleware/index.js';
 import { messagesController } from './controllers/index.js';
 import { webSocketController } from './services/websocket.js';
-
+import logger from 'koa-logger';
 // Environment variables
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -42,6 +42,7 @@ wsRouter.get(
 app.ws.use(wsRouter.routes());
 app.ws.use(wsRouter.allowedMethods());
 
+app.use(logger());
 // Error handling
 app.on('error', (err: Error, ctx: Context) => {
   console.error('Server error:', { err, ctx });

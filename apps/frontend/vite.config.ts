@@ -11,8 +11,9 @@ export default defineConfig(({ mode }) => ({
     'import.meta.env.VITE_API_URL': JSON.stringify(
       mode === 'production' ? '/api' : 'http://localhost:3000/api'
     ),
+    // Having troubles setting up nginx to proxy websocket connections, let's use backend directly for now in production
     'import.meta.env.VITE_WS_URL': JSON.stringify(
-      mode === 'production' ? 'ws://localhost/ws' : 'ws://localhost:3000'
+      mode === 'production' ? 'ws://localhost:3000' : 'ws://localhost:3000'
     ),
   },
   server: {
