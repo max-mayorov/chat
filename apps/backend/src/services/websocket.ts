@@ -1,6 +1,6 @@
 import { WebSocket } from 'ws';
 import { Message } from '@chat/domain';
-import { conversationStore } from '../models/index.js';
+import { messagesStore } from '../models/index.js';
 import { Context } from 'koa';
 import { messageService } from './message.js';
 
@@ -80,7 +80,7 @@ export class WebSocketController {
   private handleNewMessage(ws: WebSocket, payload: { message: Message }): void {
     const { message } = payload;
     // Add message to conversation
-    const success = conversationStore.addMessage(message);
+    const success = messagesStore.addMessage(message);
     if (success) {
       // Broadcast message to all clients
       this.broadcastToAll(
