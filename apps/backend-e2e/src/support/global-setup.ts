@@ -27,7 +27,7 @@ module.exports = async function () {
   let isServerRunning = false;
   while (!isServerRunning) {
     try {
-      await axios.get(`${baseUrl}:${port}/api/conversations`);
+      await axios.get(`${baseUrl}:${port}/api/messages`);
       isServerRunning = true;
     } catch (error) {
       // Wait a bit before trying again

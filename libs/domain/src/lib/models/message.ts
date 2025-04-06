@@ -25,11 +25,4 @@ export class MessageImpl implements Message {
     this.sender = message.sender;
     this.timestamp = message.timestamp;
   }
-
-  /**
-   * Edits the message content
-   */
-  edit(content: string): void {
-    this.content = content;
-  }
 }

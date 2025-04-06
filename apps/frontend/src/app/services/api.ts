@@ -1,4 +1,4 @@
-import { User, Message, Conversation } from '@chat/domain';
+import { User, Message } from '@chat/domain';
 
 // Use environment variable with fallback for local development
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -8,9 +8,14 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
  */
 export class ApiService {
   async getMessages(): Promise<Message[]> {
-    const response = await fetch(`${API_URL}/messages`);
-    const data = await response.json();
-    return data.messages;
+    try {
+      const response = await fetch(`${API_URL}/messages`);
+      const data = await response.json();
+      return data.messages;
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      return [];
+    }
   }
 
   async addMessage(content: string, sender: User): Promise<Message> {
@@ -26,5 +31,4 @@ export class ApiService {
   }
 }
 
-// Singleton instance
 export const apiService = new ApiService();

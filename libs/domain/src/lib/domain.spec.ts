@@ -57,25 +57,6 @@ describe('Domain Model', () => {
       expect(message.content).toBe('Hello, world!');
       expect(message.sender).toBe(user);
     });
-
-    it('should edit message content', () => {
-      const user = new UserImpl({
-        id: '1',
-        username: 'john_doe',
-        name: 'John Doe',
-        createdAt: new Date(),
-      });
-
-      const message = new MessageImpl({
-        id: '1',
-        content: 'Hello, world!',
-        sender: user,
-        timestamp: new Date(),
-      });
-
-      message.edit('Updated content');
-      expect(message.content).toBe('Updated content');
-    });
   });
 
   describe('Conversation', () => {
@@ -95,62 +76,10 @@ describe('Domain Model', () => {
       });
 
       const conversation = new ConversationImpl({
-        id: '1',
-        participants: [user1, user2],
         messages: [],
-        name: 'Group Chat',
-        createdAt: new Date(),
       });
 
-      expect(conversation.id).toBe('1');
-      expect(conversation.participants).toHaveLength(2);
       expect(conversation.messages).toHaveLength(0);
-      expect(conversation.name).toBe('Group Chat');
-    });
-
-    it('should add and remove participants', () => {
-      const user1 = new UserImpl({
-        id: '1',
-        username: 'john_doe',
-        name: 'John Doe',
-        createdAt: new Date(),
-      });
-
-      const user2 = new UserImpl({
-        id: '2',
-        username: 'jane_doe',
-        name: 'Jane Doe',
-        createdAt: new Date(),
-      });
-
-      const user3 = new UserImpl({
-        id: '3',
-        username: 'bob_smith',
-        name: 'Bob Smith',
-        createdAt: new Date(),
-      });
-
-      const conversation = new ConversationImpl({
-        id: '1',
-        participants: [user1, user2],
-        messages: [],
-        createdAt: new Date(),
-      });
-
-      // Add a new participant
-      conversation.addParticipant(user3);
-      expect(conversation.participants).toHaveLength(3);
-
-      // Try to add the same participant again (should not duplicate)
-      conversation.addParticipant(user3);
-      expect(conversation.participants).toHaveLength(3);
-
-      // Remove a participant
-      conversation.removeParticipant(user2.id);
-      expect(conversation.participants).toHaveLength(2);
-      expect(
-        conversation.participants.find((p) => p.id === user2.id)
-      ).toBeUndefined();
     });
 
     it('should add messages to the conversation', () => {
@@ -169,10 +98,7 @@ describe('Domain Model', () => {
       });
 
       const conversation = new ConversationImpl({
-        id: '1',
-        participants: [user1, user2],
         messages: [],
-        createdAt: new Date(),
       });
 
       const message1 = new MessageImpl({
@@ -223,21 +149,9 @@ describe('Domain Model', () => {
       expect(message.timestamp).toBeInstanceOf(Date);
     });
 
-    it('should create a conversation with factory', () => {
-      const user1 = DomainFactory.createUser('1', 'john_doe', 'John Doe');
-      const user2 = DomainFactory.createUser('2', 'jane_doe', 'Jane Doe');
-
-      const conversation = DomainFactory.createConversation(
-        '1',
-        [user1, user2],
-        'Group Chat'
-      );
-
-      expect(conversation.id).toBe('1');
-      expect(conversation.participants).toHaveLength(2);
+    it('should get a conversation with factory', () => {
+      const conversation = DomainFactory.getConversation();
       expect(conversation.messages).toHaveLength(0);
-      expect(conversation.name).toBe('Group Chat');
-      expect(conversation.createdAt).toBeInstanceOf(Date);
     });
   });
 });
