@@ -13,7 +13,8 @@ const port = 3000;
 
 module.exports = async function () {
   // Start the backend server
-  const serverProcess = spawn('npx', ['nx', 'serve', 'backend'], {
+  console.log('Starting backend server...');
+  const serverProcess = spawn('pnpm', ['dlx', 'nx', 'serve', 'backend'], {
     stdio: 'pipe',
     shell: true,
     env: { ...process.env, PORT: port.toString() },
