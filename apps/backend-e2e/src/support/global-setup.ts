@@ -21,19 +21,12 @@ module.exports = async function () {
     cwd: join(__dirname, '..', '..', '..', '..'),
   });
 
-  serverProcess.stdout.on('data', (data) => {
-    console.log(data);
-  });
-  serverProcess.stderr.on('data', (data) => {
-    console.error(data);
-  });
-
   // Store the server process so we can kill it in the teardown
   global.__SERVER__ = serverProcess;
 
   // Wait for the server to start
   let hitTimeout = false;
-  const startTimeout = setTimeout(() => (hitTimeout = true), 15000); // Wait for 15 seconds before checking
+  const startTimeout = setTimeout(() => (hitTimeout = true), 15000);
   let isServerRunning = false;
   while (!isServerRunning && !hitTimeout) {
     try {
@@ -45,6 +38,8 @@ module.exports = async function () {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
+
+  console.log('Backend server started successfully!');
 
   // Set the base URL for the tests
   process.env.API_BASE_URL = `${baseUrl}:${port}`;
