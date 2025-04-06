@@ -3,7 +3,6 @@ import WebSocket from 'ws';
 
 describe('Messages API', () => {
   const apiUrl = 'http://localhost:3000/api';
-  const wsUrl = 'ws://localhost:3000';
 
   // Test message data
   const testMessage = {
