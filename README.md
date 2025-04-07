@@ -82,3 +82,10 @@ pnpm dlx nx affected -t lint test build e2e
 ## Github actions
 
 There is also a CI pipeline implemented to check the pull requests and main branch.
+
+# Future improvements
+- Implement messages status (sending, sent, seen, etc)
+- Implement backend authentication via JWT token.
+- Use event queue to handle high amounts of visitors.
+- Add support for multiple conversations.
+- Add proper users authentication and registration.
