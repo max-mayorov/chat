@@ -92,7 +92,6 @@ export const ChatApp: React.FC = () => {
     fetchMessages();
   }, []);
 
-  // Handle setting the username
   const handleSetUsername = async (username: string) => {
     // Create a user
     const userId = uuidv4();
@@ -107,7 +106,6 @@ export const ChatApp: React.FC = () => {
     });
   };
 
-  // Handle sending a message
   const handleSendMessage = async (content: string) => {
     if (!user) return;
 
@@ -164,7 +162,6 @@ export const ChatApp: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto overflow-hidden border border-gray-300 rounded-lg shadow-lg">
-      {/* Toast container */}
       <Toaster />
 
       <header className="flex items-center justify-between p-4 text-white bg-blue-600">
