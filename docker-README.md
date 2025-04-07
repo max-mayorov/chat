@@ -24,13 +24,13 @@ This will:
 To run the services in detached mode (in the background):
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 To stop the services:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Accessing the Application
@@ -46,16 +46,7 @@ Once the services are running:
 If you make changes to the code and need to rebuild the Docker images:
 
 ```bash
-docker-compose up --build
-```
-
-## Development vs Production
-
-The Docker setup is configured for production use. For development, it's recommended to use the standard development workflow:
-
-```bash
-# Start development servers
-npm run dev
+docker compose up --build
 ```
 
 ## Environment Variables
