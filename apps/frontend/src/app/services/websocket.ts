@@ -3,6 +3,7 @@ import { Message } from '@chat/domain';
 export enum WebSocketEvent {
   NEW_MESSAGE = 'new_message',
   CONVERSATION_HISTORY = 'conversation_history',
+  CLEAR_MESSAGES = 'clear_messages',
 }
 
 export interface NewMessageEvent {
@@ -19,4 +20,12 @@ export interface ConversationHistoryEvent {
   };
 }
 
-export type WebSocketMessage = NewMessageEvent | ConversationHistoryEvent;
+export interface ClearMessagesEvent {
+  type: WebSocketEvent.CLEAR_MESSAGES;
+  payload: undefined;
+}
+
+export type WebSocketMessage =
+  | NewMessageEvent
+  | ConversationHistoryEvent
+  | ClearMessagesEvent;

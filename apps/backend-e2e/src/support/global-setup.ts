@@ -17,7 +17,7 @@ module.exports = async function () {
   const serverProcess = spawn('pnpm', ['dlx', 'nx', 'serve', 'backend'], {
     stdio: 'pipe',
     shell: true,
-    env: { ...process.env, PORT: port.toString() },
+    env: { ...process.env, PORT: port.toString(), STORE_TYPE: 'inmemory' },
     cwd: join(__dirname, '..', '..', '..', '..'),
   });
 

@@ -1,7 +1,25 @@
 version: '3.8'
 
 services:
-  # Backend service
+  mongodb:
+    image: mongo:latest
+    container_name: chat-mongodb
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=chatApp
+    networks:
+      - chat-network
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   backend:
     build:
       context: .
@@ -49,3 +67,6 @@ services:
 networks:
   chat-network:
     driver: bridge
+
+volumes:
+  mongodb_data:
