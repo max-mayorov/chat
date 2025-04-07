@@ -4,6 +4,7 @@ export enum WebSocketEvent {
   NEW_MESSAGE = 'new_message',
   CONVERSATION_HISTORY = 'conversation_history',
   CLEAR_MESSAGES = 'clear_messages',
+  ERROR = 'error',
 }
 
 export interface NewMessageEvent {
@@ -25,7 +26,15 @@ export interface ClearMessagesEvent {
   payload: undefined;
 }
 
+export interface ErrorEvent {
+  type: WebSocketEvent.ERROR;
+  payload: {
+    error: string;
+  };
+}
+
 export type WebSocketMessage =
   | NewMessageEvent
   | ConversationHistoryEvent
-  | ClearMessagesEvent;
+  | ClearMessagesEvent
+  | ErrorEvent;

@@ -61,9 +61,9 @@ export class WebSocketController {
       try {
         const message: WebSocketMessage = JSON.parse(data);
         await this.handleMessage(ws, message);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error parsing message:', error);
-        this.sendErrorToClient(ws, 'Invalid message format');
+        this.sendErrorToClient(ws, error.message);
       }
     });
 
