@@ -2,21 +2,22 @@ import { Context } from 'koa';
 import { messageService } from '../services/index.js';
 import { Message } from '@chat/domain';
 
-/**
- * Controller for conversation-related endpoints
- */
 export class MessagesController {
-  /**
-   * Get a conversation by ID
-   */
   async getMessages(ctx: Context): Promise<void> {
-    const messages = messageService.getMessages();
+    const messages = await messageService.getMessages();
     ctx.body = { messages };
   }
 
-  /**
-   * Add a message to a conversation
-   */
+  async clearMessages(ctx: Context): Promise<void> {
+    const success = await messageService.clearMessages();
+    if (!success) {
+      ctx.status = 500;
+      ctx.body = { error: 'Failed to add message to conversation' };
+      return;
+    }
+    ctx.body = { success };
+  }
+
   async addMessage(ctx: Context): Promise<void> {
     const { content, sender } = ctx.request.body as Message;
 
@@ -32,9 +33,8 @@ export class MessagesController {
       return;
     }
 
-    // Create and add the message
     const message = messageService.createMessage(content, sender);
-    const success = messageService.addMessage(message);
+    const success = await messageService.addMessage(message);
 
     if (!success) {
       ctx.status = 500;

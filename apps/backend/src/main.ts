@@ -31,6 +31,10 @@ router.post(
   messagesController.addMessage.bind(messagesController)
 );
 
+router.delete(
+  '/messages',
+  messagesController.clearMessages.bind(messagesController)
+);
 // Register routes
 app.use(router.routes());
 app.use(router.allowedMethods());

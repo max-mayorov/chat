@@ -9,6 +9,7 @@ import { WebSocketEvent, WebSocketMessage } from '../services/websocket';
 export const ChatApp: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isClearing, setIsClearing] = useState(false);
 
   // Use environment variable with fallback for local development
   const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3000';
@@ -43,7 +44,6 @@ export const ChatApp: React.FC = () => {
 
   useEffect(() => {
     if (lastJsonMessage) {
-      console.log('Received WebSocket message:', lastJsonMessage);
       const { type, payload } = lastJsonMessage as WebSocketMessage;
 
       switch (type) {
@@ -91,22 +91,57 @@ export const ChatApp: React.FC = () => {
     const newMessage = DomainFactory.createMessage(messageId, content, user);
 
     // Add message to conversation via API
-    if (isConnected) {
-      sendJsonMessage({
-        type: WebSocketEvent.NEW_MESSAGE,
-        payload: { message: newMessage },
-      });
-    } else {
-      await apiService.addMessage(content, user);
+    try {
+      if (isConnected) {
+        sendJsonMessage({
+          type: WebSocketEvent.NEW_MESSAGE,
+          payload: { message: newMessage },
+        });
+      } else {
+        await apiService.addMessage(content, user);
+      }
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error, newMessage);
     }
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  };
+  // Handle clearing all messages
+  const handleClearMessages = async () => {
+    if (!user) return;
+
+    try {
+      setIsClearing(true);
+      if (isConnected) {
+        sendJsonMessage({
+          type: WebSocketEvent.CLEAR_MESSAGES,
+        });
+      } else {
+        await apiService.clearMessages();
+      }
+      setMessages([]);
+    } catch (error) {
+      console.error('Error clearing messages:', error);
+    } finally {
+      setIsClearing(false);
+    }
   };
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto overflow-hidden border border-gray-300 rounded-lg shadow-lg">
-      <header className="p-4 text-white bg-blue-600">
-        <h1 className="text-xl font-bold">Chat App</h1>
-        {renderConnectionStatus()}
+      <header className="flex items-center justify-between p-4 text-white bg-blue-600">
+        <div>
+          <h1 className="text-xl font-bold">Chat App</h1>
+          {renderConnectionStatus()}
+        </div>
+        {user && (
+          <button
+            onClick={handleClearMessages}
+            disabled={isClearing}
+            className="px-4 py-2 text-white transition-colors bg-red-500 rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isClearing ? 'Clearing...' : 'Clear Messages'}
+          </button>
+        )}
       </header>
 
       {!user ? (
