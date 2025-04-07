@@ -5,6 +5,7 @@ import { MessageList, MessageInput, UserInput } from './index';
 import { apiService } from '../services';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { WebSocketEvent, WebSocketMessage } from '../services/websocket';
+import toast, { Toaster } from 'react-hot-toast';
 
 export const ChatApp: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -16,8 +17,12 @@ export const ChatApp: React.FC = () => {
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(wsUrl, {
     onOpen: () => console.log('WebSocket connected'),
-    onClose: () => console.log('WebSocket disconnected'),
-    onError: (event) => console.error('WebSocket error:', event),
+    onClose: () => {
+      console.log('WebSocket disconnected');
+    },
+    onError: (event) => {
+      console.error('WebSocket error:', event);
+    },
     reconnectAttempts: 10,
     reconnectInterval: 3000,
     shouldReconnect: () => true,
@@ -53,6 +58,13 @@ export const ChatApp: React.FC = () => {
         case WebSocketEvent.CONVERSATION_HISTORY:
           setMessages(payload.messages);
           break;
+        case WebSocketEvent.ERROR:
+          toast.error('Failed to fetch messages. Check your connection.', {
+            duration: 4000,
+            position: 'top-right',
+          });
+          console.error('WebSocket error:', payload.error);
+          break;
         default:
           console.log('Unhandled WebSocket message type:', type);
       }
@@ -61,12 +73,21 @@ export const ChatApp: React.FC = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const retrievedMessages = await apiService.getMessages();
-      setMessages((prevMessages) =>
-        retrievedMessages.length > prevMessages.length
-          ? retrievedMessages
-          : prevMessages
-      );
+      let retrievedMessages: Message[] = [];
+      try {
+        retrievedMessages = await apiService.getMessages();
+      } catch (error) {
+        console.error('Failed to fetch messages:', error);
+        toast.error('Failed to fetch messages. Check your connection.', {
+          duration: 4000,
+          position: 'top-right',
+        });
+        setMessages((prevMessages) =>
+          retrievedMessages.length > prevMessages.length
+            ? retrievedMessages
+            : prevMessages
+        );
+      }
     };
     fetchMessages();
   }, []);
@@ -81,6 +102,9 @@ export const ChatApp: React.FC = () => {
       username // Using username as name for simplicity
     );
     setUser(newUser);
+    toast.success(`Welcome, ${username}!`, {
+      position: 'top-right',
+    });
   };
 
   // Handle sending a message
@@ -103,8 +127,13 @@ export const ChatApp: React.FC = () => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     } catch (error) {
       console.error('Error sending message:', error, newMessage);
+      toast.error('Failed to send message. Please try again.', {
+        duration: 3000,
+        position: 'top-right',
+      });
     }
   };
+
   // Handle clearing all messages
   const handleClearMessages = async () => {
     if (!user) return;
@@ -119,8 +148,15 @@ export const ChatApp: React.FC = () => {
         await apiService.clearMessages();
       }
       setMessages([]);
+      toast.success('All messages cleared', {
+        position: 'top-right',
+      });
     } catch (error) {
       console.error('Error clearing messages:', error);
+      toast.error('Failed to clear messages. Please try again.', {
+        duration: 3000,
+        position: 'top-right',
+      });
     } finally {
       setIsClearing(false);
     }
@@ -128,6 +164,9 @@ export const ChatApp: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto overflow-hidden border border-gray-300 rounded-lg shadow-lg">
+      {/* Toast container */}
+      <Toaster />
+
       <header className="flex items-center justify-between p-4 text-white bg-blue-600">
         <div>
           <h1 className="text-xl font-bold">Chat App</h1>
