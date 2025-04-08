@@ -68,7 +68,7 @@ The easiest way to start the application is to use docker
 docker compose up -d
 ```
 
-The application is served on https://localhost:4200.
+The application is served on http://localhost:4200.
 
 
 ## Testing
