@@ -25,7 +25,7 @@ export class InMemoryMessagesStoreImpl implements MessagesStore {
   }
 
   async clearMessages(): Promise<boolean> {
-    this.conversation.messages = [];
+    this.conversation = DomainFactory.getConversation();
     return true;
   }
 }

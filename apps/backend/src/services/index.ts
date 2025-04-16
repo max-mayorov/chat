@@ -1,2 +1,2 @@
-export * from './message.js';
-export * from './websocket.js';
+export * from './message';
+export * from './websocket';
